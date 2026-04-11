@@ -1,0 +1,46 @@
+# ---- macOS ----                                                                                                          
+.DS_Store                                                                                                                  
+.AppleDouble                                                                                                               
+.LSOverride                                                                                                                
+                                                   
+# ---- Xcode user-specific ----                                                                                            
+# Per-user workspace state — should never be committed                                                                     
+xcuserdata/                                      
+*.xcuserstate                                                                                                              
+*.xcuserdatad/                                                                                                             
+                                              
+# ---- Xcode build output ----                                                                                             
+build/                                   
+DerivedData/                                                                                                               
+*.hmap                                 
+*.ipa                                                                                                                      
+*.dSYM.zip                                       
+*.dSYM                                                                                                                     
+                                                                                                                             
+# ---- Swift Package Manager ----   
+.build/                                                                                                                    
+Packages/                                   
+Package.pins                                                                                                               
+Package.resolved                       
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/                                                                      
+                                           
+# ---- CocoaPods / Carthage (not using these, but future-proof) ----                                                       
+Pods/                                    
+Carthage/Build/                                                                                                            
+                                                   
+# ---- Playgrounds ----             
+timeline.xctimeline                                                                                                        
+playground.xcworkspace                           
+                                                                                                                             
+# ---- Swift / fastlane ----                                                                                               
+fastlane/report.xml                                                                                                        
+fastlane/Preview.html                                                                                                      
+fastlane/screenshots/**/*.png                                                                                              
+fastlane/test_output                             
+                                                                                                                             
+# ---- Editor / OS junk ----                                                                                               
+*.swp                                       
+*.swo                                                                                                                      
+*~                                     
+.idea/                                                                                                                     
+.vscode/     
