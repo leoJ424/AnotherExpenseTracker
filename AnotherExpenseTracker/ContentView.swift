@@ -7,15 +7,36 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct ContentView : View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationSplitView {
+            // Sidebar content
+            List {
+                Label("Expenses", systemImage: "list.bullet")
+            }
         }
-        .padding()
+        detail: {
+            // Detail Pane
+            EmptyExpensesView()
+        }
+    }
+}
+
+struct EmptyExpensesView: View {
+    var body : some View {
+        VStack(spacing: 12) {
+            Image(systemName: "tray")
+                .font(.system(size: 48))
+                .foregroundStyle(.secondary)
+            Text("No expenses yet")
+                .font(.title2)
+                .foregroundStyle(.secondary)
+            Text("Add your first expense to get started.")
+                .font(.callout)
+                .foregroundStyle(.tertiary)
+                
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

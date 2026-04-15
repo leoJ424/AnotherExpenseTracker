@@ -10,8 +10,10 @@ import SwiftUI
 @main
 struct AnotherExpenseTrackerApp: App {
     var body: some Scene {
-        WindowGroup {
+        WindowGroup() {
             ContentView()
         }
+        .defaultSize(width: 900, height: 600)
+        .windowResizability(.contentSize)
     }
 }
