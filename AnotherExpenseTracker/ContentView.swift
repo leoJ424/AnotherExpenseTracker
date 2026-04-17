@@ -17,7 +17,7 @@ struct ContentView : View {
         }
         detail: {
             // Detail Pane
-            EmptyExpensesView()
+            ExpenseListView()
         }
     }
 }
