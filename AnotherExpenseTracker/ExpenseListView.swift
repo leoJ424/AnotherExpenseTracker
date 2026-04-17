@@ -10,6 +10,7 @@ import SwiftData
 
 struct ExpenseListView: View {
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
+    @State private var showingAddSheet = false
     
     private var total: Double {
         expenses.reduce(0) { runningTotal, expense in
@@ -38,6 +39,18 @@ struct ExpenseListView: View {
                     .monospacedDigit()
             }
             .padding()
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    showingAddSheet = true
+                } label: {
+                    Label("Add Expense", systemImage: "plus")
+                }
+            }
+        }
+        .sheet(isPresented: $showingAddSheet) {
+            AddExpenseSheet()
         }
     }
 }
