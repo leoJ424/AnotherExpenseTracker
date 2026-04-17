@@ -8,6 +8,12 @@
 import SwiftUI
 import SwiftData
 
+enum DateRange: String, CaseIterable {
+    case allTime = "All Time"
+    case thisMonth = "This Month"
+    case lastMonth = "Last Month"
+}
+
 struct ExpenseListView: View {
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
     @State private var showingAddSheet = false
@@ -17,15 +23,43 @@ struct ExpenseListView: View {
     
     @Environment(\.modelContext) private var modelContext
     
+    @State private var searchText = ""
+    @State private var selectedCategory: Category?
+    @State private var selectedDateRange: DateRange = .allTime
+    
+    private var filteredExpenses: [Expense] {
+        expenses.filter { expense in
+            let matchesSearch = searchText.isEmpty ||
+                                expense.note.localizedCaseInsensitiveContains(searchText) ||
+                                expense.category.rawValue.localizedCaseInsensitiveContains(searchText)
+            
+            let matchesCategory = selectedCategory == nil ||
+                expense.category == selectedCategory
+            
+            let matchesDate: Bool
+            switch selectedDateRange {
+            case .allTime:
+                matchesDate = true
+            case .thisMonth:
+                matchesDate = Calendar.current.isDate(expense.date, equalTo: .now, toGranularity: .month)
+            case .lastMonth:
+                let lastMonth = Calendar.current.date(byAdding: .month, value: -1, to: .now)!
+                matchesDate = Calendar.current.isDate(expense.date, equalTo: lastMonth, toGranularity: .month)
+            }
+            
+            return matchesSearch && matchesCategory && matchesDate
+        }
+    }
+    
     private var total: Double {
-        expenses.reduce(0) { runningTotal, expense in
+        filteredExpenses.reduce(0) { runningTotal, expense in
                 runningTotal + expense.amount
         }
     }
     var body: some View {
         VStack(spacing: 0) {
             List {
-                ForEach(expenses) { expense in
+                ForEach(filteredExpenses) { expense in
                     ExpenseRow(expense: expense)
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -42,9 +76,11 @@ struct ExpenseListView: View {
                         }
                 }
             }
+            .id("\(searchText.isEmpty)-\(String(describing: selectedCategory))-\(selectedDateRange)")
             .sheet(item: $expenseToEdit) { expense in
                     ExpenseEditorSheet(expense: expense)
             }
+            .searchable(text: $searchText, prompt: "Search Expenses")
             
             Divider()
             
@@ -61,6 +97,26 @@ struct ExpenseListView: View {
             .padding()
         }
         .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Picker("Category", selection: $selectedCategory) {
+                    Text("All Categories").tag(nil as Category?)
+                    
+                    Divider()
+                    
+                    ForEach(Category.allCases, id: \.self) { category in
+                        Text(category.rawValue).tag(category as Category?)
+                    }
+                }
+            }
+            
+            ToolbarItem(placement: .automatic) {
+                Picker("Date Range", selection: $selectedDateRange) {
+                    ForEach(DateRange.allCases, id: \.self) { range in
+                        Text(range.rawValue).tag(range)
+                    }
+                }
+            }
+            
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     showingAddSheet = true
