@@ -1,5 +1,5 @@
 //
-//  AddExpenseSheet.swift
+//  ExpenseEditorSheet.swift
 //  AnotherExpenseTracker
 //
 //  Created by Joel Mani Joseph Tharappel on 4/16/26.
@@ -8,22 +8,32 @@
 import SwiftUI
 import SwiftData
 
-struct AddExpenseSheet: View {
+struct ExpenseEditorSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     
-    @State private var amount: Double = 0
-    @State private var date: Date = .now
-    @State private var category: Category = .food
-    @State private var note: String = ""
+    let expenseToEdit: Expense?
     
-    private var isValid: Bool {
-        amount > 0
+    @State private var amount: Double
+    @State private var date: Date
+    @State private var category: Category
+    @State private var note: String
+    
+    private var isEditing: Bool {expenseToEdit != nil }
+    
+    private var isValid: Bool { amount > 0 }
+    
+    init(expense: Expense? = nil) {
+        self.expenseToEdit = expense
+        _amount = State(initialValue: expense?.amount ?? 0)
+        _date = State(initialValue: expense?.date ?? .now)
+        _category = State(initialValue: expense?.category ?? .food)
+        _note = State(initialValue: expense?.note ?? "")
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("New Expense")
+            Text(isEditing ? "Edit Expense" : "New Expense")
                 .font(.title2)
                 .fontWeight(.semibold)
                 .padding()
@@ -56,7 +66,7 @@ struct AddExpenseSheet: View {
                 }
                 .keyboardShortcut(.cancelAction)
                 
-                Button("Save") {
+                Button(isEditing ? "Update" : "Save") {
                     save()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -68,18 +78,26 @@ struct AddExpenseSheet: View {
     }
     
     private func save() {
-        let newExpense = Expense(
-            amount: amount,
-            date: date,
-            category: category,
-            note: note
-        )
-        modelContext.insert(newExpense)
+        if let expense = expenseToEdit {
+            expense.amount = amount
+            expense.date = date
+            expense.category = category
+            expense.note = note
+        } else {
+            let newExpense = Expense(
+                amount: amount,
+                date: date,
+                category: category,
+                note: note
+            )
+            modelContext.insert(newExpense)
+        }
         try? modelContext.save()
         dismiss()
     }
 }
 
 #Preview {
-    AddExpenseSheet()
+    ExpenseEditorSheet()
+        .modelContainer(for: Expense.self, inMemory: true)
 }

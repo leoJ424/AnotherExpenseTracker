@@ -11,6 +11,11 @@ import SwiftData
 struct ExpenseListView: View {
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
     @State private var showingAddSheet = false
+    @State private var expenseToEdit: Expense?
+    @State private var expenseToDelete: Expense?
+    @State private var showingDeleteAlert = false
+    
+    @Environment(\.modelContext) private var modelContext
     
     private var total: Double {
         expenses.reduce(0) { runningTotal, expense in
@@ -21,9 +26,24 @@ struct ExpenseListView: View {
         VStack(spacing: 0) {
             List {
                 ForEach(expenses) { expense in
-                    //Text("\(expense.category.rawValue): $\(expense.amount)")
                     ExpenseRow(expense: expense)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            expenseToEdit = expense
+                        }
+                        .contextMenu {
+                            Button("Edit") {
+                                expenseToEdit = expense
+                            }
+                            Button("Delete", role: .destructive) {
+                                expenseToDelete = expense
+                                showingDeleteAlert = true
+                            }
+                        }
                 }
+            }
+            .sheet(item: $expenseToEdit) { expense in
+                    ExpenseEditorSheet(expense: expense)
             }
             
             Divider()
@@ -50,7 +70,18 @@ struct ExpenseListView: View {
             }
         }
         .sheet(isPresented: $showingAddSheet) {
-            AddExpenseSheet()
+            ExpenseEditorSheet()
+        }
+        .alert("Delete Expense?", isPresented: $showingDeleteAlert) {
+            Button("Delete", role: .destructive) {
+                if let expense = expenseToDelete {
+                    modelContext.delete(expense)
+                    try? modelContext.save()
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This action cannot be undone.")
         }
     }
 }
