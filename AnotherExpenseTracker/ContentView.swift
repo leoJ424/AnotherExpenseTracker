@@ -7,17 +7,37 @@
 
 import SwiftUI
 
+enum SidebarItem: String, CaseIterable {
+    case expenses = "Expenses"
+    case summary = "Summary"
+    
+    var icon: String {
+        switch self {
+        case .expenses: return "list.bullet"
+        case .summary: return "chart.pie"
+        }
+    }
+}
+
 struct ContentView : View {
+    @State private var selectedItem: SidebarItem? = .expenses
+    
     var body: some View {
         NavigationSplitView {
             // Sidebar content
-            List {
-                Label("Expenses", systemImage: "list.bullet")
+            List(SidebarItem.allCases, id: \.self, selection: $selectedItem) { item in
+                Label(item.rawValue, systemImage: item.icon)
             }
-        }
-        detail: {
-            // Detail Pane
-            ExpenseListView()
+        } detail: {
+            switch selectedItem {
+            case .expenses:
+                ExpenseListView()
+            case .summary:
+                SpendingSummaryView()
+            case nil:
+                Text("Select an item from the sidebar")
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }
