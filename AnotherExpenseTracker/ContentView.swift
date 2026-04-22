@@ -10,11 +10,13 @@ import SwiftUI
 enum SidebarItem: String, CaseIterable {
     case expenses = "Expenses"
     case summary = "Summary"
+    case accounts = "Accounts"
     
     var icon: String {
         switch self {
         case .expenses: return "list.bullet"
         case .summary: return "chart.pie"
+        case .accounts: return "creditcard"
         }
     }
 }
@@ -34,6 +36,8 @@ struct ContentView : View {
                 ExpenseListView()
             case .summary:
                 SpendingSummaryView()
+            case .accounts:
+                AccountListView()
             case nil:
                 Text("Select an item from the sidebar")
                     .foregroundStyle(.secondary)
