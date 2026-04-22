@@ -12,16 +12,19 @@ struct ExpenseEditorSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     
+    @Query(sort: \Account.name) private var accounts: [Account]
+    
     let expenseToEdit: Expense?
     
     @State private var amount: Double
     @State private var date: Date
     @State private var category: Category
     @State private var note: String
+    @State private var account: Account?
     
     private var isEditing: Bool {expenseToEdit != nil }
     
-    private var isValid: Bool { amount > 0 }
+    private var isValid: Bool { amount > 0 && account != nil }
     
     init(expense: Expense? = nil) {
         self.expenseToEdit = expense
@@ -29,6 +32,7 @@ struct ExpenseEditorSheet: View {
         _date = State(initialValue: expense?.date ?? .now)
         _category = State(initialValue: expense?.category ?? .food)
         _note = State(initialValue: expense?.note ?? "")
+        _account = State(initialValue: expense?.account)
     }
     
     var body: some View {
@@ -48,6 +52,12 @@ struct ExpenseEditorSheet: View {
                 Picker("Category", selection: $category) {
                     ForEach(Category.allCases, id:\.self) { category in
                         Text(category.rawValue).tag(category)
+                    }
+                }
+                
+                Picker("Account", selection: $account) {
+                    ForEach(accounts) { acc in
+                        Text(acc.name).tag(acc as Account?)
                     }
                 }
                 
@@ -75,28 +85,29 @@ struct ExpenseEditorSheet: View {
             .padding()
         }
         .frame(minWidth: 400, minHeight: 400)
+        .task {
+            if account == nil {
+                account = accounts.first(where: { $0.isDefault })
+            }
+        }
     }
     
     private func save() {
+        guard let account = account else { return }
+        
         if let expense = expenseToEdit {
             expense.amount = amount
             expense.date = date
             expense.category = category
             expense.note = note
+            expense.account = account
         } else {
-            let descriptor = FetchDescriptor<Account>(
-                predicate: #Predicate { $0.isDefault }
-            )
-            guard let defaultAccount = (try? modelContext.fetch(descriptor))?.first else {
-                return
-            }
-            
             let newExpense = Expense(
                 amount: amount,
                 date: date,
                 category: category,
                 note: note,
-                account: defaultAccount
+                account: account
             )
             modelContext.insert(newExpense)
         }
@@ -107,5 +118,5 @@ struct ExpenseEditorSheet: View {
 
 #Preview {
     ExpenseEditorSheet()
-        .modelContainer(for: Expense.self, inMemory: true)
+        .modelContainer(for: [Expense.self, Account.self], inMemory: true)
 }

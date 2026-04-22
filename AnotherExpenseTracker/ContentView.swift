@@ -39,6 +39,7 @@ struct ContentView : View {
                     .foregroundStyle(.secondary)
             }
         }
+        .frame(minWidth: 700, minHeight: 400)
     }
 }
 

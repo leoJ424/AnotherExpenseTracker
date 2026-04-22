@@ -147,22 +147,33 @@ struct ExpenseRow: View {
     
     var body: some View {
         HStack(spacing: 12){
-            Image(systemName: iconName(for: expense.category))
-                .font(.title3)
-                .frame(width: 28)
-                .foregroundStyle(.tint)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(expense.category.rawValue)
-                    .font(.headline)
-                if(!expense.note.isEmpty) {
-                    Text(expense.note)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+            // Left Section
+            HStack(spacing: 12) {
+                Image(systemName: iconName(for: expense.category))
+                    .font(.title3)
+                    .frame(width: 28)
+                    .foregroundStyle(.tint)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(expense.category.rawValue)
+                        .font(.headline)
+                    if(!expense.note.isEmpty) {
+                        Text(expense.note)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
+                .lineLimit(1)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             
-            Spacer()
+            // Middle Section
+            Text(expense.account.name)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .center)
+            
             
             VStack(alignment: .trailing, spacing: 2) {
                 Text(expense.amount, format: .currency(code: "USD"))
@@ -172,6 +183,8 @@ struct ExpenseRow: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .lineLimit(1)
         }
         .padding(.vertical, 4)
     }
@@ -191,5 +204,5 @@ struct ExpenseRow: View {
 
 #Preview {
     ExpenseListView()
-        .modelContainer(for: Expense.self, inMemory: true)
+        .modelContainer(for: [Expense.self, Account.self], inMemory: true)
 }
