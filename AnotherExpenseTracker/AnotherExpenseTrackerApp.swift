@@ -14,7 +14,7 @@ struct AnotherExpenseTrackerApp: App {
     
     init() {
         do {
-            container = try ModelContainer(for: Expense.self)
+            container = try ModelContainer(for: Expense.self, Account.self)
             seedIfNeeded(container.mainContext)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
@@ -25,20 +25,40 @@ struct AnotherExpenseTrackerApp: App {
         WindowGroup() {
             ContentView()
         }
-        .modelContainer(for: Expense.self)
+        .modelContainer(for: [Expense.self, Account.self])
         .defaultSize(width: 900, height: 600)
         .windowResizability(.contentSize)
     }
     
     private func seedIfNeeded(_ context: ModelContext) {
+        ensureDefaultAccount(context)
+        
         let descriptor = FetchDescriptor<Expense>()
         let existing = (try? context.fetch(descriptor)) ?? []
         guard existing.isEmpty else { return }
+        
+        for account in Account.samples where !account.isDefault {
+            context.insert(account)
+        }
         
         for sample in Expense.samples {
             context.insert(sample)
         }
         try? context.save()
-        print("Seeded \(Expense.samples.count) sample expenses  ")
+        print("Seeded \(Expense.samples.count) sample expenses and accounts.")
+    }
+    
+    private func ensureDefaultAccount(_ context: ModelContext) {
+        let descriptor = FetchDescriptor<Account> (
+            predicate: #Predicate { $0.isDefault }
+        )
+        let existing = (try? context.fetch(descriptor)) ?? []
+        guard existing.isEmpty else { return }
+        
+        if let defaultAccount = Account.samples.first(where: { $0.isDefault }) {
+            context.insert(defaultAccount)
+            try? context.save()
+            print("Created default Cash account.")
+        }
     }
 }

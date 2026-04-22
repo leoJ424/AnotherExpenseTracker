@@ -84,11 +84,19 @@ struct ExpenseEditorSheet: View {
             expense.category = category
             expense.note = note
         } else {
+            let descriptor = FetchDescriptor<Account>(
+                predicate: #Predicate { $0.isDefault }
+            )
+            guard let defaultAccount = (try? modelContext.fetch(descriptor))?.first else {
+                return
+            }
+            
             let newExpense = Expense(
                 amount: amount,
                 date: date,
                 category: category,
-                note: note
+                note: note,
+                account: defaultAccount
             )
             modelContext.insert(newExpense)
         }
