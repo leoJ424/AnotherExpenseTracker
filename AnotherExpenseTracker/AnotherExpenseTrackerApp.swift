@@ -14,7 +14,7 @@ struct AnotherExpenseTrackerApp: App {
     
     init() {
         do {
-            container = try ModelContainer(for: Expense.self, Account.self)
+            container = try ModelContainer(for: Expense.self, Account.self, Budget.self)
             seedIfNeeded(container.mainContext)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
@@ -25,7 +25,7 @@ struct AnotherExpenseTrackerApp: App {
         WindowGroup() {
             ContentView()
         }
-        .modelContainer(for: [Expense.self, Account.self])
+        .modelContainer(for: [Expense.self, Account.self, Budget.self])
         .defaultSize(width: 900, height: 600)
         .windowResizability(.contentSize)
     }
