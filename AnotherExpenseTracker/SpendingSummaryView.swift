@@ -11,6 +11,7 @@ import Charts
 
 struct SpendingSummaryView: View {
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
+    @Query private var budgets: [Budget]
     
     @State private var windowOffset: Int = 0
     
@@ -73,6 +74,17 @@ struct SpendingSummaryView: View {
         return paddingStart...paddingEnd
     }
     
+    private func isOverBudgetThisMonth(_ category: Category) -> Bool {
+        guard let budget = budgets.first(where: { $0.category == category }) else {
+            return false
+        }
+        let calendar = Calendar.current
+        let thisMonthSpent = expenses
+            .filter{ $0.category == category && calendar.isDate($0.date, equalTo: .now, toGranularity: .month) }
+            .reduce(0) { $0 + $1.amount }
+        return thisMonthSpent > budget.amount
+    }
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -101,12 +113,25 @@ struct SpendingSummaryView: View {
                             
                             VStack(alignment: .leading, spacing: 8) {
                                 ForEach(spendingByCategory, id: \.category) { item in
+                                    let overBudget = isOverBudgetThisMonth(item.category)
+                                    
                                     HStack {
+                                        if overBudget {
+                                            Image(systemName: "exclamationmark.triangle.fill")
+                                                .foregroundStyle(.red)
+                                                .help("Over budget this month")
+                                        }
+                                        
                                         Text(item.category.rawValue)
                                             .font(.body)
+                                            .foregroundStyle(overBudget ? .red : .primary)
+                                            .help(overBudget ? "Over budget this month" : "")
+
                                         Spacer()
+                                        
                                         Text(item.total, format: .currency(code: "USD"))
                                             .monospacedDigit()
+                                        
                                         Text("(\(percentage(item.total))%)")
                                             .foregroundStyle(.secondary)
                                             .monospacedDigit()
@@ -197,5 +222,5 @@ struct SpendingSummaryView: View {
 
 #Preview {
     SpendingSummaryView()
-        .modelContainer(for: Expense.self, inMemory: true)
+        .modelContainer(for: [Expense.self, Account.self, Budget.self], inMemory: true)
 }
