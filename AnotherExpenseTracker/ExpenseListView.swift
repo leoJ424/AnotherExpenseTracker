@@ -16,10 +16,14 @@ enum DateRange: String, CaseIterable {
 
 struct ExpenseListView: View {
     @Query(sort: \Expense.date, order: .reverse) private var expenses: [Expense]
+    @Query(sort: \Account.name) private var accounts: [Account]
+    
     @State private var showingAddSheet = false
     @State private var expenseToEdit: Expense?
     @State private var expenseToDelete: Expense?
     @State private var showingDeleteAlert = false
+    @State private var selectedAccount: Account?
+    
     
     @Environment(\.modelContext) private var modelContext
     
@@ -36,6 +40,9 @@ struct ExpenseListView: View {
             let matchesCategory = selectedCategory == nil ||
                 expense.category == selectedCategory
             
+            let matchesAccount = selectedAccount == nil ||
+                expense.account == selectedAccount
+            
             let matchesDate: Bool
             switch selectedDateRange {
             case .allTime:
@@ -47,7 +54,7 @@ struct ExpenseListView: View {
                 matchesDate = Calendar.current.isDate(expense.date, equalTo: lastMonth, toGranularity: .month)
             }
             
-            return matchesSearch && matchesCategory && matchesDate
+            return matchesSearch && matchesCategory && matchesAccount && matchesDate
         }
     }
     
@@ -76,7 +83,7 @@ struct ExpenseListView: View {
                         }
                 }
             }
-            .id("\(searchText.isEmpty)-\(String(describing: selectedCategory))-\(selectedDateRange)")
+            .id("\(searchText.isEmpty)-\(String(describing: selectedCategory))-\(String(describing: selectedAccount))-\(selectedDateRange)")
             .sheet(item: $expenseToEdit) { expense in
                     ExpenseEditorSheet(expense: expense)
             }
@@ -105,6 +112,18 @@ struct ExpenseListView: View {
                     
                     ForEach(Category.allCases, id: \.self) { category in
                         Text(category.rawValue).tag(category as Category?)
+                    }
+                }
+            }
+            
+            ToolbarItem(placement: .automatic) {
+                Picker("Account", selection: $selectedAccount) {
+                    Text("All Accounts").tag(nil as Account?)
+                    
+                    Divider()
+                    
+                    ForEach(accounts) { account in
+                        Text(account.name).tag(account as Account?)
                     }
                 }
             }
