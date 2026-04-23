@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Category: String, CaseIterable, Codable {
+enum Category: String, CaseIterable, Codable, Identifiable {
     case food = "Food"
     case transport = "Transport"
     case shopping = "Shopping"
@@ -15,4 +15,6 @@ enum Category: String, CaseIterable, Codable {
     case entertainment = "Entertainment"
     case health = "Health"
     case other = "Other"
+    
+    var id: String { rawValue }
 }

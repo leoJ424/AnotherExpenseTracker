@@ -11,12 +11,14 @@ enum SidebarItem: String, CaseIterable {
     case expenses = "Expenses"
     case summary = "Summary"
     case accounts = "Accounts"
+    case budgets = "Budgets"
     
     var icon: String {
         switch self {
         case .expenses: return "list.bullet"
         case .summary: return "chart.pie"
         case .accounts: return "creditcard"
+        case .budgets: return "target"
         }
     }
 }
@@ -38,6 +40,8 @@ struct ContentView : View {
                 SpendingSummaryView()
             case .accounts:
                 AccountListView()
+            case .budgets:
+                BudgetsView()
             case nil:
                 Text("Select an item from the sidebar")
                     .foregroundStyle(.secondary)
