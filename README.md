@@ -52,4 +52,4 @@ This is a learning project — my first app in Swift/Xcode — and a spiritual s
                                                                                                                             
 ## License                                                                                                                 
                                                                                                                             
-Personal project — no license declared yet.      
+MIT — see LICENSE.     
