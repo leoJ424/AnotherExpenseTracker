@@ -21,17 +21,21 @@ This is a learning project — my first app in Swift/Xcode — and a spiritual s
 ## Roadmap                                  
                                                                                                                             
 ### MVP                                     
-- [ ] Phase 0 — Project scaffolding & GitHub setup                                                                         
-- [ ] Phase 1 — App shell with navigation layout 
-- [ ] Phase 2 — Expense model and SwiftData setup                                                                          
-- [ ] Phase 3 — Display expense list                                                                                       
-- [ ] Phase 4 — Add expense sheet                                                                                          
-- [ ] Phase 5 — Edit and delete expenses                                                                                   
-- [ ] Phase 6 — Filtering and search                                                                                       
+- [x] Phase 0 — Project scaffolding & GitHub setup                                                                         
+- [x] Phase 1 — App shell with navigation layout 
+- [x] Phase 2 — Expense model and SwiftData setup                                                                          
+- [x] Phase 3 — Display expense list                                                                                       
+- [x] Phase 4 — Add expense sheet                                                                                          
+- [x] Phase 5 — Edit and delete expenses                                                                                   
+- [x] Phase 6 — Filtering and search                                                                                       
                                                 
 ### Post-MVP                                     
-- [ ] Phase 7 — Charts and summaries                                                                                       
-- [ ] Phase 8 — Accounts / cards                                                                                           
+- [x] Phase 7 — Charts and summaries                                                                                       
+- [x] Phase 8 — Accounts / cards  
+    - 8.1 — `Account` model, mandatory relationship on `Expense`, default Cash account seeded on launch
+    - 8.2 — Account picker in the expense editor; account shown on each expense row                                                                 
+    - 8.3 — Accounts management view with edit and delete (default account and accounts with linked expenses are protected from deletion)           
+    - 8.4 — Filter expenses by account in the main list                                                                                         
 - [ ] Phase 9 — Budgets per category                                                                                       
 - [ ] Phase 10 — Polish (icon, settings, export, shortcuts)                                                                
                                             
