@@ -15,7 +15,7 @@ This is a learning project — my first app in Swift/Xcode — and a spiritual s
                                                                                                                             
 - **SwiftUI** — UI framework                     
 - **SwiftData** — local persistence (SQLite-backed, no manual schema)
-- **Swift Charts** — spending visualizations (coming in a later phase)                                                     
+- **Swift Charts** — spending visualizations                                                 
 - **macOS 14+** — minimum deployment target (required for SwiftData)
                                                                                                                             
 ## Roadmap                                  
@@ -36,7 +36,10 @@ This is a learning project — my first app in Swift/Xcode — and a spiritual s
     - 8.2 — Account picker in the expense editor; account shown on each expense row                                                                 
     - 8.3 — Accounts management view with edit and delete (default account and accounts with linked expenses are protected from deletion)           
     - 8.4 — Filter expenses by account in the main list                                                                                         
-- [ ] Phase 9 — Budgets per category                                                                                                              
+- [x] Phase 9 — Budgets per category                                                                                                              
+    - 9.1 — `Budget` model (sparse by design — no record means no budget set) + container registration                                            
+    - 9.2 — Budgets view with per-category progress bars, upsert editor, and over-budget tint                                                     
+    - 9.3 — Over-budget flag in Summary view (warning icon + red tint + hover tooltip)                                                                                                              
 - [ ] Phase 10 — Recurring expenses                                                                                                               
 - [ ] Phase 11 — Polish (icon, settings, export, shortcuts)                                                                                       
 - [ ] Phase 12 — DB-side filtering (migrate in-memory filters to `#Predicate`)                                                              
