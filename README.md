@@ -36,8 +36,10 @@ This is a learning project — my first app in Swift/Xcode — and a spiritual s
     - 8.2 — Account picker in the expense editor; account shown on each expense row                                                                 
     - 8.3 — Accounts management view with edit and delete (default account and accounts with linked expenses are protected from deletion)           
     - 8.4 — Filter expenses by account in the main list                                                                                         
-- [ ] Phase 9 — Budgets per category                                                                                       
-- [ ] Phase 10 — Polish (icon, settings, export, shortcuts)                                                                
+- [ ] Phase 9 — Budgets per category                                                                                                              
+- [ ] Phase 10 — Recurring expenses                                                                                                               
+- [ ] Phase 11 — Polish (icon, settings, export, shortcuts)                                                                                       
+- [ ] Phase 12 — DB-side filtering (migrate in-memory filters to `#Predicate`)                                                              
                                             
 ## Building                                                                                                                
                                         
