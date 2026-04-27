@@ -20,10 +20,9 @@ final class RecurringExpense {
     var lastGeneratedDate: Date?
     
     @Relationship(deleteRule: .nullify, inverse: \Expense.sourceSchedule)
-    
     var generatedExpenses: [Expense] = []
     
-    init (
+    init(
         amount: Double,
         category: Category,
         account: Account,

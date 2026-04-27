@@ -12,6 +12,7 @@ enum SidebarItem: String, CaseIterable {
     case summary = "Summary"
     case accounts = "Accounts"
     case budgets = "Budgets"
+    case recurring = "Recurring"
     
     var icon: String {
         switch self {
@@ -19,6 +20,7 @@ enum SidebarItem: String, CaseIterable {
         case .summary: return "chart.pie"
         case .accounts: return "creditcard"
         case .budgets: return "target"
+        case .recurring: return "arrow.triangle.2.circlepath"
         }
     }
 }
@@ -42,6 +44,8 @@ struct ContentView : View {
                 AccountListView()
             case .budgets:
                 BudgetsView()
+            case .recurring:
+                RecurringListView()
             case nil:
                 Text("Select an item from the sidebar")
                     .foregroundStyle(.secondary)
