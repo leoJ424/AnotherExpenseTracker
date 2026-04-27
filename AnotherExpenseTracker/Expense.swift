@@ -15,6 +15,7 @@ final class Expense {
     var category: Category
     var note: String
     var account: Account
+    var sourceSchedule: RecurringExpense?
     
     init(amount: Double, date: Date = .now, category: Category, note: String = "", account: Account){
         self.amount = amount
