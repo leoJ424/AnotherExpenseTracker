@@ -15,16 +15,19 @@ struct BudgetEditorSheet: View {
     let category: Category
     let existing: Budget?
     
-    @State private var amount: Double
+    @State private var amount: Double?
     
     private var isEditing: Bool { existing != nil }
-    private var isValid: Bool { amount >= 0 }
+    private var isValid: Bool {
+        guard let amount, amount >= 0 else { return false }
+        return true
+    }
     
     init(category: Category, existing: Budget? = nil) {
         self.category = category
         self.existing = existing
         
-        _amount = State(initialValue: existing?.amount ?? 0)
+        _amount = State(initialValue: existing?.amount)
     }
     
     var body: some View {
@@ -37,7 +40,7 @@ struct BudgetEditorSheet: View {
             Divider()
             
             Form {
-                TextField("Monthly Amount", value: $amount, format: .currency(code: "USD"))
+                TextField("Monthly Amount", value: $amount, format: .currency(code: "USD"), prompt: Text("$0.00"))
             }
             .formStyle(.grouped)
             .padding()
@@ -64,6 +67,8 @@ struct BudgetEditorSheet: View {
     }
     
     private func save() {
+        guard let amount else { return }
+        
         if let existing {
             existing.amount = amount
         } else {

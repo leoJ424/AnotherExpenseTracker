@@ -16,7 +16,7 @@ struct ExpenseEditorSheet: View {
     
     let expenseToEdit: Expense?
     
-    @State private var amount: Double
+    @State private var amount: Double?
     @State private var date: Date
     @State private var category: Category
     @State private var note: String
@@ -24,11 +24,14 @@ struct ExpenseEditorSheet: View {
     
     private var isEditing: Bool {expenseToEdit != nil }
     
-    private var isValid: Bool { amount > 0 && account != nil }
+    private var isValid: Bool {
+        guard let amount, amount > 0 else { return false }
+        return account != nil
+    }
     
     init(expense: Expense? = nil) {
         self.expenseToEdit = expense
-        _amount = State(initialValue: expense?.amount ?? 0)
+        _amount = State(initialValue: expense?.amount)
         _date = State(initialValue: expense?.date ?? .now)
         _category = State(initialValue: expense?.category ?? .food)
         _note = State(initialValue: expense?.note ?? "")
@@ -45,7 +48,7 @@ struct ExpenseEditorSheet: View {
             Divider()
             
             Form {
-                TextField("Amount", value: $amount, format: .currency(code: "USD"))
+                TextField("Amount", value: $amount, format: .currency(code: "USD"), prompt: Text("$0.00"))
                 
                 DatePicker("Date", selection: $date, displayedComponents: .date)
                 
@@ -56,6 +59,7 @@ struct ExpenseEditorSheet: View {
                 }
                 
                 Picker("Account", selection: $account) {
+                    Text("Select...").tag(Account?.none)
                     ForEach(accounts) { acc in
                         Text(acc.name).tag(acc as Account?)
                     }
@@ -93,7 +97,7 @@ struct ExpenseEditorSheet: View {
     }
     
     private func save() {
-        guard let account = account else { return }
+        guard let amount, let account else { return }
         
         if let expense = expenseToEdit {
             expense.amount = amount

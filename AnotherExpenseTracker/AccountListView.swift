@@ -12,6 +12,7 @@ struct AccountListView: View {
     
     @Query(sort: \Account.name) private var accounts: [Account]
     @Query private var expenses: [Expense]
+    @Query private var recurringExpenses: [RecurringExpense]
     
     @Environment(\.modelContext) private var modelContext
     
@@ -25,7 +26,10 @@ struct AccountListView: View {
     var body: some View {
         List {
             ForEach(accounts) { account in
-                AccountRow(account: account, expenseCount: expenseCount(for: account))
+                AccountRow(account: account,
+                           expenseCount: expenseCount(for: account),
+                           recurringCount: recurringCount(for: account)
+                )
                     .contentShape(Rectangle())
                     .onTapGesture {
                         accountToEdit = account
@@ -77,15 +81,28 @@ struct AccountListView: View {
         expenses.filter { $0.account == account }.count
     }
     
+    private func recurringCount(for account: Account) -> Int {
+        recurringExpenses.filter { $0.account == account }.count
+    }
+    
     private func attemptDelete(_ account: Account) {
         if account.isDefault {
             blockedReason = "The default account cannot be deleted."
             showingBlockedDeleteAlert = true
             return
         }
-        let count = expenseCount(for: account)
-        if count > 0 {
-            blockedReason = "This account has \(count) expense\(count == 1 ? "" : "s") linked to it. Reassign or delete them first."
+        let expenseCount = expenseCount(for: account)
+        let recurringCount = recurringCount(for: account)
+        if expenseCount > 0 || recurringCount > 0 {
+            var parts: [String] = []
+            if expenseCount > 0 {
+                parts.append("\(expenseCount) expense\(expenseCount == 1 ? "" : "s")")
+            }
+            if recurringCount > 0 {
+                parts.append("\(recurringCount) recurring schedule\(recurringCount == 1 ? "" : "s")")
+            }
+            let listed = parts.joined(separator: " and ")
+            blockedReason = "This account has \(listed) linked to it. Reassign or delete them first."
             showingBlockedDeleteAlert = true
             return
         }
@@ -97,6 +114,7 @@ struct AccountListView: View {
 struct AccountRow: View {
     let account: Account
     let expenseCount: Int
+    let recurringCount: Int
     
     var body: some View {
         HStack {
@@ -123,9 +141,17 @@ struct AccountRow: View {
             
             Spacer()
             
-            Text("\(expenseCount) expense\(expenseCount == 1 ? "" : "s")")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            VStack(alignment: .trailing, spacing: 2) {
+                Text("\(expenseCount) expense\(expenseCount == 1 ? "" : "s")")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                if recurringCount > 0 {
+                    Text("\(recurringCount) recurring")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
         .padding(.vertical, 8)
     }
