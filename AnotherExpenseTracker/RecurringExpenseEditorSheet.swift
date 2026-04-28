@@ -16,7 +16,7 @@ struct RecurringExpenseEditorSheet: View {
     
     let existing: RecurringExpense?
     
-    @State private var amount: Double
+    @State private var amount: Double?
     @State private var category: Category
     @State private var account: Account?
     @State private var note: String
@@ -28,15 +28,15 @@ struct RecurringExpenseEditorSheet: View {
     private var isEditing: Bool { existing != nil }
     
     private var isValid: Bool {
-        amount > 0 &&
-        account != nil &&
-        (!hasEndDate || endDate >= startDate)
+        guard let amount, amount > 0 else { return false }
+        guard account != nil else { return false }
+        return (!hasEndDate || endDate >= startDate)
     }
     
     init(existing: RecurringExpense? = nil) {
         self.existing = existing
         
-        _amount = State(initialValue: existing?.amount ?? 0)
+        _amount = State(initialValue: existing?.amount)
         _category = State(initialValue: existing?.category ?? .bills)
         _account = State(initialValue: existing?.account)
         _note = State(initialValue: existing?.note ?? "")
@@ -56,7 +56,7 @@ struct RecurringExpenseEditorSheet: View {
             Divider()
             
             Form {
-                TextField("Amount", value: $amount, format: .currency(code: "USD"))
+                TextField("Amount", value: $amount, format: .currency(code: "USD"), prompt: Text("$0.00"))
                 
                 Picker("Category", selection: $category) {
                     ForEach(Category.allCases) { cat in
@@ -122,7 +122,7 @@ struct RecurringExpenseEditorSheet: View {
     }
     
     private func save() {
-        guard let account else { return }
+        guard let amount, let account else { return }
         
         let finalEndDate: Date? = hasEndDate ? endDate : nil
         
@@ -146,7 +146,7 @@ struct RecurringExpenseEditorSheet: View {
             )
             modelContext.insert(new)
         }
-        try? modelContext.save()
+        RecurringGenerator.runAll(in: modelContext)
         dismiss()
     }
 }

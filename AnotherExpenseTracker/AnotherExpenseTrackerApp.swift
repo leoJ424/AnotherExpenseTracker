@@ -16,6 +16,7 @@ struct AnotherExpenseTrackerApp: App {
         do {
             container = try ModelContainer(for: Expense.self, Account.self, Budget.self, RecurringExpense.self)
             seedIfNeeded(container.mainContext)
+            RecurringGenerator.runAll(in: container.mainContext)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
