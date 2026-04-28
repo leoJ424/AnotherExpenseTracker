@@ -40,7 +40,12 @@ This is a learning project — my first app in Swift/Xcode — and a spiritual s
     - 9.1 — `Budget` model (sparse by design — no record means no budget set) + container registration                                            
     - 9.2 — Budgets view with per-category progress bars, upsert editor, and over-budget tint                                                     
     - 9.3 — Over-budget flag in Summary view (warning icon + red tint + hover tooltip)                                                                                                              
-- [ ] Phase 10 — Recurring expenses                                                                                                               
+- [x] Phase 10 — Recurring expenses
+    - 10.1 — `RecurringExpense` model + `Frequency` enum + `sourceSchedule` back-reference on `Expense` (additive migration)                                             
+    - 10.2 — Recurring list view + sidebar entry, computed next-due date per row                                                                                         
+    - 10.3 — Editor sheet with create / edit / delete, optional end date via toggle                                                                                      
+    - 10.4 — Auto-generation on app launch and after save (idempotent catch-up via `lastGeneratedDate`)                                                                  
+    - 10.5 — Cleared-field fix across editors, Account picker placeholder, Account deletion guard now counts recurring schedules                                                                                                           
 - [ ] Phase 11 — Polish (icon, settings, export, shortcuts)                                                                                       
 - [ ] Phase 12 — DB-side filtering (migrate in-memory filters to `#Predicate`)                                                              
                                             
